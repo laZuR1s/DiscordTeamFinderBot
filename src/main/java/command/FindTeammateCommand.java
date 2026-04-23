@@ -32,7 +32,6 @@ public class FindTeammateCommand {
         }
 
         event.reply(response.toString())
-                .setEphemeral(true)
                 .queue();
     }
 }

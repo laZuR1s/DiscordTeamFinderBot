@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ===================== USERS ===================== -->
+    <changeSet id="1" author="teamfinder">
+
+        <createTable tableName="users">
+
+            <column name="user_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="discord_id" type="BIGINT">
+                <constraints unique="true" nullable="false"/>
+            </column>
+
+            <column name="steam_id" type="BIGINT"/>
+
+            <column name="username" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="registered_at" type="DATE" defaultValueComputed="CURRENT_DATE"/>
+
+            <column name="role_id" type="INT"/>
+
+        </createTable>
+
+    </changeSet>
+
+    <!-- ===================== ROLES ===================== -->
+    <changeSet id="2" author="teamfinder">
+
+        <createTable tableName="roles">
+
+            <column name="role_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="role_name" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+    </changeSet>
+
+    <!-- ===================== GAMES ===================== -->
+    <changeSet id="3" author="teamfinder">
+
+        <createTable tableName="game">
+
+            <column name="game_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="game_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+    </changeSet>
+
+    <!-- ================= APPLICATION STATUSES ================= -->
+    <changeSet id="4" author="teamfinder">
+
+        <createTable tableName="application_statuses">
+
+            <column name="status_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="status_name" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+    </changeSet>
+
+    <!-- ================= APPLICATIONS ================= -->
+    <changeSet id="5" author="teamfinder">
+
+        <createTable tableName="applications">
+
+            <column name="application_id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="description" type="VARCHAR(200)"/>
+
+            <column name="players_needed" type="INT"/>
+
+            <column name="created_at" type="DATE" defaultValueComputed="CURRENT_DATE"/>
+
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="game_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="rank" type="VARCHAR(20)"/>
+
+            <column name="title" type="VARCHAR(100)"/>
+
+        </createTable>
+
+    </changeSet>
+
+    <!-- ================= FAVORITES ================= -->
+    <changeSet id="6" author="teamfinder">
+
+        <createTable tableName="favorites">
+
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="application_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addPrimaryKey
+                tableName="favorites"
+                columnNames="user_id, application_id"
+                constraintName="pk_favorites"/>
+
+    </changeSet>
+
+</databaseChangeLog>

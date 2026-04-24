@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="7" author="teamfinder">
+
+        <createTable tableName="reactions">
+
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="application_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="is_like" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="DATE"
+                    defaultValueComputed="CURRENT_DATE"/>
+
+        </createTable>
+
+        <!-- чтобы нельзя было лайкнуть одну и ту же анкету дважды -->
+        <addPrimaryKey
+                tableName="reactions"
+                columnNames="user_id, application_id"
+                constraintName="pk_reactions"/>
+
+    </changeSet>
+
+</databaseChangeLog>

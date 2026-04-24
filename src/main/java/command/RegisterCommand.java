@@ -13,18 +13,19 @@ public class RegisterCommand {
     }
 
     public void execute(SlashCommandInteractionEvent event) {
-        String game= "cs2";
-        String rank = "gold";
 
-        User user = new User(
-                event.getUser().getId(),
-                event.getUser().getName(),
-                game,
-                rank
-        );
+        long discordId = event.getUser().getIdLong();
+        String username = event.getUser().getName();
 
-        UserRepository.save(user);
+
+        if (userRepository.existsByDiscordId(discordId)) {
+            event.reply("Ты уже зарегистрирован!").queue();
+            return;
+        }
+
+        userRepository.save(discordId, username);
 
         event.reply("Ты зарегистрирован 👍").queue();
+
     }
 }

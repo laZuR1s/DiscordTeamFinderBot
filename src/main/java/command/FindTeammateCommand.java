@@ -1,8 +1,11 @@
 package command;
 
 import Service.MatchmakingService;
+import model.Application;
 import model.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import repository.UserRepository;
 
 import java.util.List;
 
@@ -16,23 +19,31 @@ public class FindTeammateCommand {
 
     public void execute(SlashCommandInteractionEvent event) {
 
-        String game = "cs2";
-        List<User> users = matchmakingService.findTeammates(game, event.getUser().getId());
+        long discordId = event.getUser().getIdLong();
+        long userId = UserRepository.getUserIdByDiscordId(discordId);
 
-        if (users.isEmpty()) {
-            event.reply("К сожалению, сейчас нет игроков для " + game).queue();
+        Application application = matchmakingService.getNext(userId);
+
+        if (application == null) {
+            event.reply("Анкеты закончились").queue();
             return;
         }
 
-
-        StringBuilder response = new StringBuilder("Вот кого я нашел:\n");
-
-        for (User user : users) {
-            response.append(user.getUsername()).append(" (").append(user.getRank()).append(")\n");
-        }
-
-        event.reply(response.toString())
+        event.reply("""
+                        🎮 **%s**
+                        📝 %s
+                        👥 Нужно игроков: %d
+                        """.formatted(
+                        application.getGame(),
+                        application.getDescription(),
+                        application.getPlayersNeeded()
+                ))
+                .addActionRow(
+                        Button.success("like_" + application.getId(), "👍"),
+                        Button.danger("dislike_" + application.getId(), "👎")
+                )
                 .queue();
     }
 }
+
 

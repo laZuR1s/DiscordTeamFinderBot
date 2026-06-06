@@ -37,3 +37,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Env variables
+.env
+.env.*
+
+# Logs
+*.log

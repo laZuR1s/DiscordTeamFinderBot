@@ -4,6 +4,7 @@ import Service.MatchmakingService;
 import command.FindTeammateCommand;
 import command.RegisterCommand;
 import command.StartCommand;
+import config.EnvConfig;
 import listener.ButtonListener;
 import listener.SlashCommandListener;
 import net.dv8tion.jda.api.JDA;
@@ -16,7 +17,7 @@ import repository.UserRepository;
 
 public class DiscordBot {
 
-    final String DISCORD_API_TOKEN = "MTQ5MzQ5Mzk0OTM3MTc3NzAzNA.GOIi7-.Q6H4xP5Kevv9TCzdPVb78eH_r65OKqrVnQ02y8";
+    String token = EnvConfig.getDiscordToken();
 
     public void start() {
 
@@ -31,7 +32,7 @@ public class DiscordBot {
         FindTeammateCommand findTeammateCommand = new FindTeammateCommand(matchmakingService);
         StartCommand startCommand = new StartCommand(userRepository, applicationRepository);
 
-        JDA jda = JDABuilder.createDefault(DISCORD_API_TOKEN,
+        JDA jda = JDABuilder.createDefault(token,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new SlashCommandListener(registerCommand, findTeammateCommand, startCommand),

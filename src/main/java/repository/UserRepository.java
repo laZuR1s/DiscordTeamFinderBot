@@ -1,19 +1,13 @@
 package repository;
 
 import config.DatabaseConfig;
-import model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserRepository {
-
-    private static final List<User> users = new ArrayList<>();
 
     public void save(long discordId, String username) {
 
@@ -57,7 +51,7 @@ public class UserRepository {
         return false;
     }
 
-    public static long getUserIdByDiscordId(long discordId) {
+    public static int getUserIdByDiscordId(long discordId) {
 
         String sql = "SELECT user_id FROM users WHERE discord_id = ?";
 
@@ -69,7 +63,7 @@ public class UserRepository {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getLong("user_id");
+                return rs.getInt("user_id");
             }
 
             throw new RuntimeException("User not found");

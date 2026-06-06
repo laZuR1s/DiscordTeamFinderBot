@@ -5,6 +5,7 @@ import command.FindTeammateCommand;
 import command.RegisterCommand;
 import command.StartCommand;
 import config.EnvConfig;
+import listener.ApplicationModalListener;
 import listener.ButtonListener;
 import listener.SlashCommandListener;
 import net.dv8tion.jda.api.JDA;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import repository.ApplicationRepository;
+import repository.GameRepository;
 import repository.ReactionRepository;
 import repository.UserRepository;
 
@@ -25,6 +27,7 @@ public class DiscordBot {
         UserRepository userRepository = new UserRepository();
         ApplicationRepository applicationRepository = new ApplicationRepository();
         ReactionRepository reactionRepository = new ReactionRepository();
+        GameRepository gameRepository= new GameRepository();
 
         MatchmakingService matchmakingService = new MatchmakingService(applicationRepository, reactionRepository);
 
@@ -36,7 +39,8 @@ public class DiscordBot {
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new SlashCommandListener(registerCommand, findTeammateCommand, startCommand),
-                        new ButtonListener(matchmakingService))
+                        new ButtonListener(matchmakingService),
+                        new ApplicationModalListener(applicationRepository,userRepository,gameRepository))
                 .build();
 
         jda.updateCommands().addCommands(

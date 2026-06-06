@@ -1,7 +1,6 @@
 package repository;
 
 import config.DatabaseConfig;
-import liquibase.database.Database;
 import model.Application;
 
 import java.sql.Connection;
@@ -10,6 +9,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ApplicationRepository {
+
+    public void createApplication(long userId, Integer gameId, String description, int playersNeeded) {
+
+        String sql = """
+                    INSERT INTO applications
+                    (description, players_needed, created_at, user_id, game_id, status_id)
+                    VALUES (?, ?, CURRENT_DATE, ?, ?, ?)
+                """;
+
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, description);
+            statement.setInt(2, playersNeeded);
+            statement.setLong(3, userId);
+            statement.setInt(4, gameId);
+            statement.setInt(5, 1);
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     public Application getNextApplication(long userId) {
 
@@ -55,7 +79,7 @@ public class ApplicationRepository {
     public long getApplicationOwner(int applicationId) {
 
         String sql = """
-                SELECT user_id 
+                SELECT user_id
                 FROM applications a
                 WHERE application_id = ?;
                 """;

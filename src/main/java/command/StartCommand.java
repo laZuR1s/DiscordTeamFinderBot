@@ -1,6 +1,5 @@
 package command;
 
-import listener.SlashCommandListener;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import repository.ApplicationRepository;
@@ -42,8 +41,7 @@ public class StartCommand {
         event.reply("🏠 Главное меню")
                 .addActionRow(
                         Button.primary("my_app","📄 Моя анкета" ),
-                        Button.success("find","🔍 Искать тиммейта"),
-                        Button.secondary("edit_app", "✏ Изменить анкету")
+                        Button.success("find","🔍 Искать тиммейта")
                 )
                 .queue();
     }

@@ -8,14 +8,17 @@ public class Application {
     private final int playersNeeded;
     private final long userId;
     private final String game;
+    private final int statusId;
 
-    public Application(int id, String title, String description, int playersNeeded, long userId, String game) {
+
+    public Application(int id, String title, String description, int playersNeeded, long userId, String game, int statusId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.playersNeeded = playersNeeded;
         this.userId = userId;
         this.game = game;
+        this.statusId = statusId;
     }
 
     public int getId() {
@@ -40,5 +43,9 @@ public class Application {
 
     public String getGame() {
         return game;
+    }
+
+    public int getStatusId() {
+        return statusId;
     }
 }

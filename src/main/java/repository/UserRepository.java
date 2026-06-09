@@ -9,6 +9,32 @@ import java.sql.SQLException;
 
 public class UserRepository {
 
+    public static String getSteamId(long userId) {
+
+        String sql = """
+            SELECT steam_id
+            FROM users
+            WHERE user_id = ?
+            """;
+
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, userId);
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("steam_id");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
     public void save(long discordId, String username) {
 
         String sql = """

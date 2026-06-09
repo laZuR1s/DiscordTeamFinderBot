@@ -1,6 +1,7 @@
 package bot;
 
 import Service.MatchmakingService;
+import Service.SteamService;
 import command.FindTeammateCommand;
 import command.RegisterCommand;
 import command.StartCommand;
@@ -31,6 +32,7 @@ public class DiscordBot {
         GameRepository gameRepository = new GameRepository();
 
         MatchmakingService matchmakingService = new MatchmakingService(applicationRepository, reactionRepository);
+        SteamService steamService = new SteamService(EnvConfig.getSteamApiKey());
 
         RegisterCommand registerCommand = new RegisterCommand(userRepository);
         FindTeammateCommand findTeammateCommand = new FindTeammateCommand(matchmakingService);
@@ -41,7 +43,7 @@ public class DiscordBot {
                         GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(
                         new SlashCommandListener(registerCommand, findTeammateCommand, startCommand),
-                        new ButtonListener(matchmakingService, applicationRepository),
+                        new ButtonListener(matchmakingService, applicationRepository, steamService),
                         new ApplicationModalListener(applicationRepository, userRepository, gameRepository),
                         new SelectMenuListener())
                 .build();

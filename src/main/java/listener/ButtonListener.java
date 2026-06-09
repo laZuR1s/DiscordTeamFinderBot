@@ -1,12 +1,18 @@
 package listener;
 
 import Service.MatchmakingService;
+import Service.SteamService;
+import mapper.GameMapper;
 import model.Application;
+import model.SteamProfile;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import repository.ApplicationRepository;
 import repository.UserRepository;
 import util.MenuUtil;
@@ -15,10 +21,13 @@ public class ButtonListener extends ListenerAdapter {
 
     private final MatchmakingService matchmakingService;
     private final ApplicationRepository applicationRepository;
+    private final SteamService steamService;
 
-    public ButtonListener(MatchmakingService matchmakingService, ApplicationRepository applicationRepository) {
+
+    public ButtonListener(MatchmakingService matchmakingService, ApplicationRepository applicationRepository, SteamService steamService) {
         this.matchmakingService = matchmakingService;
         this.applicationRepository = applicationRepository;
+        this.steamService = steamService;
     }
 
     @Override
@@ -27,6 +36,8 @@ public class ButtonListener extends ListenerAdapter {
         String id = event.getComponentId();
         long discordId = event.getUser().getIdLong();
         long userId = UserRepository.getUserIdByDiscordId(discordId);
+
+        String steamId = UserRepository.getSteamId(userId);
 
         switch (id) {
             case "create_app" -> {
@@ -73,12 +84,44 @@ public class ButtonListener extends ListenerAdapter {
                     return;
                 }
 
+
+                String steamInfo;
+                if (steamId == null || steamId.isBlank()) {
+                    steamInfo = """
+                            👤 Steam не привязан
+                            """;
+                } else {
+                    try {
+                        SteamProfile profile = steamService.getProfile(steamId);
+
+                        int level = steamService.getSteamLevel(steamId);
+                        int hours = steamService.getHoursInGame(steamId, GameMapper.getAppId(app.getGame()));
+
+                        steamInfo = """
+                                👤 %s
+                                ⭐ Level: %d
+                                ⏱ %s: %dh
+                                """.formatted(
+                                profile.getNickname(),
+                                level,
+                                app.getGame(),
+                                hours
+                        );
+                    } catch (Exception e) {
+                        steamInfo = """
+                                ⚠ Steam недоступен
+                                """;
+                    }
+                }
+
                 String status = app.getStatusId() == 1 ? "Активна" : "Неактивна";
 
                 event.reply("""
                                 📄 Твоя анкета
                                 
                                 🎮 Игра: %s
+                                
+                                %s
                                 
                                 📝 Описание:
                                 %s
@@ -88,6 +131,7 @@ public class ButtonListener extends ListenerAdapter {
                                 📌 Статус: %s
                                 """.formatted(
                                 app.getGame(),
+                                steamInfo,
                                 app.getDescription(),
                                 app.getPlayersNeeded(),
                                 status

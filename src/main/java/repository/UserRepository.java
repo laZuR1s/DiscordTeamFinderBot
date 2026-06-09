@@ -35,6 +35,27 @@ public class UserRepository {
         return null;
     }
 
+    public static void updateSteamIdByDiscordId(long discordId, String steamId) {
+
+        String sql = """
+                UPDATE users
+                SET steam_id = ?
+                WHERE discord_id = ?
+                """;
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setLong(1, Long.parseLong(steamId));
+            ps.setLong(2, discordId);
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void save(long discordId, String username) {
 
         String sql = """

@@ -10,9 +10,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import repository.ApplicationRepository;
 import repository.UserRepository;
 import util.MenuUtil;
@@ -144,6 +141,10 @@ public class ButtonListener extends ListenerAdapter {
                                 Button.primary(
                                         "edit_app",
                                         "✏ Изменить"
+                                ),
+                                Button.primary(
+                                        "link_steam",
+                                        "✏ Привязать Steam"
                                 ),
                                 app.getStatusId() == 1
                                         ? Button.danger(
@@ -313,6 +314,21 @@ public class ButtonListener extends ListenerAdapter {
                         )
                         .queue();
             }
+
+            case "link_steam" -> {
+
+                String url = "http://localhost:8080/auth/steam?discordId=" + discordId;
+
+                event.reply("""
+                                🔗 Привязка Steam
+                                
+                                Нажми:
+                                %s
+                                """.formatted(url))
+                        .setEphemeral(true)
+                        .queue();
+            }
+
         }
 
 

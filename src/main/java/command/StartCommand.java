@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import repository.ApplicationRepository;
 import repository.UserRepository;
+import util.MenuUtil;
 
 public class StartCommand {
 
@@ -38,11 +39,6 @@ public class StartCommand {
             return;
         }
 
-        event.reply("🏠 Главное меню")
-                .addActionRow(
-                        Button.primary("my_app","📄 Моя анкета" ),
-                        Button.success("find","🔍 Искать тиммейта")
-                )
-                .queue();
+        MenuUtil.sendMainMenu(event);
     }
 }

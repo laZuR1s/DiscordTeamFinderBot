@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import repository.ApplicationRepository;
 import repository.UserRepository;
+import util.MenuUtil;
 
 public class ButtonListener extends ListenerAdapter {
 
@@ -30,12 +31,24 @@ public class ButtonListener extends ListenerAdapter {
         switch (id) {
             case "create_app" -> {
 
+                Application application = applicationRepository.getUserApplication(userId);
+
+                if (application != null) {
+                    event.reply("""
+                            ❌ У тебя уже есть анкета
+                            
+                            Используй кнопку
+                            "Изменить анкету"
+                            """).queue();
+                    return;
+                }
+
                 SelectMenu menu = StringSelectMenu.create("select_game_create")
                         .setPlaceholder("Выбери игру")
                         .addOption("CS2", "1")
                         .addOption("Dota 2", "2")
-                        .addOption("Valorant", "3")
-                        .addOption("League of Legends", "4")
+                        .addOption("Deadlock", "3")
+                        .addOption("Europa Universalis IV", "4")
                         .build();
 
                 event.reply("🎮 Выбери игру для анкеты:")
@@ -117,8 +130,8 @@ public class ButtonListener extends ListenerAdapter {
                         .setPlaceholder("🎮 Выбери новую игру")
                         .addOption("CS2", "1")
                         .addOption("Dota 2", "2")
-                        .addOption("Valorant", "3")
-                        .addOption("Minecraft", "4")
+                        .addOption("Deadlock", "3")
+                        .addOption("Europa Universalis IV", "4")
                         .build();
 
                 event.reply("✏ Выбери игру для изменения анкеты")
@@ -209,19 +222,7 @@ public class ButtonListener extends ListenerAdapter {
 
             case "back_menu" -> {
 
-                event.reply("🏠 Главное меню")
-                        .addActionRow(
-                                Button.primary(
-                                        "my_app",
-                                        "📄 Моя анкета"
-                                ),
-
-                                Button.success(
-                                        "find",
-                                        "🔍 Искать тиммейта"
-                                )
-                        )
-                        .queue();
+                MenuUtil.sendMainMenu(event);
 
                 return;
             }

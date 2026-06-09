@@ -30,7 +30,6 @@ public class DiscordBot {
         ReactionRepository reactionRepository = new ReactionRepository();
         GameRepository gameRepository = new GameRepository();
 
-
         MatchmakingService matchmakingService = new MatchmakingService(applicationRepository, reactionRepository);
 
         RegisterCommand registerCommand = new RegisterCommand(userRepository);

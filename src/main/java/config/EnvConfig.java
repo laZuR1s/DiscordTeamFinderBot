@@ -21,4 +21,8 @@ public class EnvConfig {
     public static String getDatabasePassword() {
         return dotenv.get("DB_PASSWORD");
     }
+
+    public static String getSteamApiKey() {
+        return dotenv.get("STEAM_API_KEY");
+    }
 }

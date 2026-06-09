@@ -2,10 +2,10 @@ package listener;
 
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import repository.ApplicationRepository;
 import repository.GameRepository;
 import repository.UserRepository;
+import util.MenuUtil;
 
 public class ApplicationModalListener extends ListenerAdapter {
 
@@ -36,28 +36,52 @@ public class ApplicationModalListener extends ListenerAdapter {
 
             String description = event.getValue("description").getAsString();
 
-            int playersNeeded = Integer.parseInt(
-                    event.getValue("players").getAsString()
-            );
+            if (description.length() > 500) {
+
+                MenuUtil.sendMainMenu(event, """
+                        ❌ Максимум 500 символов
+                        """);
+
+                return;
+            }
+
+            String playersNeeded =
+                    event.getValue("players").getAsString();
+
+            int players;
+
+            try {
+                players = Integer.parseInt(playersNeeded);
+            } catch (NumberFormatException e) {
+
+                MenuUtil.sendMainMenu(event, """
+                        ❌ Количество игроков должно быть числом
+                        """);
+
+                return;
+            }
+
+            if (players < 1 || players > 10) {
+
+                MenuUtil.sendMainMenu(event, """
+                        ❌ Количество игроков должно быть от 1 до 10
+                        """);
+
+                return;
+            }
 
             applicationRepository.createApplication(
                     userId,
                     gameId,
                     description,
-                    playersNeeded
+                    players
             );
 
-            event.reply("""
-                            ✅ Анкета успешно создана!
-                            
-                            Теперь можешь искать тиммейтов или управлять своей анкетой.
-                            """)
-                    .addActionRow(
-                            Button.primary("my_app", "📄 Моя анкета"),
-                            Button.success("find", "🔍 Искать тиммейта"),
-                            Button.secondary("edit_app", "✏ Изменить анкету")
-                    )
-                    .queue();
+            MenuUtil.sendMainMenu(event, """
+                    ✅ Анкета создана
+                    """);
+
+            MenuUtil.sendMainMenu(event);
         }
 
         if (modalId.startsWith("edit_application_")) {
@@ -66,21 +90,56 @@ public class ApplicationModalListener extends ListenerAdapter {
             long discordId = event.getUser().getIdLong();
             int userId = UserRepository.getUserIdByDiscordId(discordId);
 
+
+            String description = event.getValue("description").getAsString();
+
+            if (description.length() > 500) {
+
+                MenuUtil.sendMainMenu(event, """
+                        ❌ Максимум 500 символов
+                        """);
+
+                return;
+            }
+
+            String playersNeeded =
+                    event.getValue("players").getAsString();
+
+            int players;
+
+            try {
+                players = Integer.parseInt(playersNeeded);
+            } catch (NumberFormatException e) {
+
+                MenuUtil.sendMainMenu(event, """
+                        ❌ Количество игроков должно быть числом
+                        """);
+
+                return;
+            }
+
+            if (players < 1 || players > 10) {
+
+                MenuUtil.sendMainMenu(event, """
+                        ❌ Количество игроков должно быть от 1 до 10
+                        """);
+
+                return;
+            }
+
             applicationRepository.updateApplicationFull(
                     userId,
                     gameId,
-                    event.getValue("description").getAsString(),
-                    Integer.parseInt(event.getValue("players").getAsString())
+                    description,
+                    players
             );
 
             applicationRepository.updateStatus(userId, 1);
 
-            event.reply("✏ Анкета обновлена")
-                    .addActionRow(
-                            Button.primary("my_app", "📄 Моя анкета"),
-                            Button.success("find", "🔍 Искать тиммейта")
-                    )
-                    .queue();
+            MenuUtil.sendMainMenu(event,
+                    """
+                            ✅ Анкета обновлена
+                            """);
 
         }
     }
